@@ -1,52 +1,37 @@
-import { request } from '@/plugins/request'
-import type { JksPlugin, JksPluginSync, JksPluginVersion } from '@/types/jks-plugin'
+import { request } from "@/plugins/request";
+import type { JksPlugin, JksPluginData, JksPluginVersion } from "@/types/jks-plugin";
+import { last, mapValues, values } from "lodash-es";
 
-const isLoaded = ref(false)
-const lastUpdated = ref<Date>()
-const pluginList = ref<JksPlugin[]>([])
+const isLoaded = ref(false);
+const generationTimestamp = ref<Date>();
+const pluginList = ref<JksPlugin[]>([]);
 
 export function useJenkins() {
-
   if (!isLoaded.value) {
     fetchPluginList().then((res) => {
-      pluginList.value = res.plugins.slice(0, 30)
-      isLoaded.value = true
-      lastUpdated.value = new Date(res.lastUpdated)
-    })
+      pluginList.value = values(
+        mapValues(res.plugins, (val, key) => {
+          const list = values(val);
+          return { name: key, list, latest: last(list) as JksPluginVersion };
+        })
+      );
+      isLoaded.value = true;
+      generationTimestamp.value = new Date(res.generationTimestamp);
+    });
   }
 
-  const pluginsCount = computed(() => pluginList.value.length)
+  const pluginsCount = computed(() => pluginList.value.length);
 
   return {
-    pluginList, isLoaded, lastUpdated,
+    pluginList,
+    isLoaded,
+    generationTimestamp,
     pluginsCount,
     fetchPluginList,
-    downloadPlugin
-  }
+  };
 }
 
-function fetchPluginList(): Promise<JksPluginSync> {
-  return request({ url: 'https://raw.githubusercontent.com/tuanzi-universe/jenkins-plugins-sync/refs/heads/master/output.json' })
-    .then(res => res.data)
-}
-
-function downloadPlugin(identifier: string, plugin: JksPluginVersion) {
-  return request({
-    url: plugin.link,
-    method: 'get',
-    responseType: 'blob',
-    onDownloadProgress: (e) => { console.log(e) }
-  }).then(response => {
-    const fileName = decodeURI(response.headers['content-disposition'].split(';')[1].split('filename=')[1])
-
-    const blobUrl = window.URL.createObjectURL(response.data)
-    const linkEl = document.createElement('a')
-    linkEl.setAttribute('href', blobUrl)
-    const extension = fileName.split('.').pop()
-    linkEl.setAttribute('download', `${identifier}-${plugin.version}.${extension}`)
-    linkEl.click()
-
-    window.URL.revokeObjectURL(blobUrl)
-    return response
-  })
+function fetchPluginList(): Promise<JksPluginData> {
+  // return request({ url: "/jks-api/update-center/plugin-versions.json" }).then((res) => res.data);
+  return request({ url: "/plugin-versions.json" }).then((res) => res.data);
 }

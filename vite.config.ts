@@ -20,11 +20,11 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/jks-updates': {
-        target: 'https://updates.jenkins.io/',
+      '/jks-api': {
+        target: 'https://archives.jenkins.io/',
         secure: false,
         changeOrigin: true,
-        rewrite: path => path.replace(/^\/jks-updates/, ''),
+        rewrite: path => path.replace(/^\/jks-api/, ''),
       }
     }
   }

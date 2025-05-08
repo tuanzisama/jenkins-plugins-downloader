@@ -12,8 +12,16 @@
       </t-form>
 
       <div class="plugin-table">
-        <t-table row-key="index" :data="jks.pluginList.value" :columns="tableColumns" hover cell-empty-content="-"
-          height="400px" lazy-load>
+        <t-table
+          row-key="index"
+          :data="jks.pluginList.value"
+          :columns="tableColumns"
+          hover
+          size="small"
+          cell-empty-content="-"
+          height="400px"
+          lazy-load
+        >
         </t-table>
       </div>
     </div>
@@ -34,7 +42,6 @@ const formData = reactive({
 
 const tableColumns = ref<PrimaryTableCol[]>([
   { colKey: "name", title: "Plugin name", width: "120", ellipsis: true },
-  { colKey: "id", title: "Identifier", width: "120" },
   {
     colKey: "versionLength",
     title: "Number of available",
@@ -46,9 +53,16 @@ const tableColumns = ref<PrimaryTableCol[]>([
     title: "Action",
     width: "60",
     cell: (h, { row }) =>
-      h(TButton, {
-        theme: "primary", size: "small", variant: "text", onClick: () => onDownloadClickHandler(row as JksPlugin),
-      }, "Download")
+      h(
+        TButton,
+        {
+          theme: "primary",
+          size: "small",
+          variant: "text",
+          onClick: () => onDownloadClickHandler(row as JksPlugin),
+        },
+        "Download"
+      ),
   },
 ]);
 
@@ -58,8 +72,7 @@ onMounted(() => {
 
 function onDownloadClickHandler(plugin: JksPlugin) {
   console.info(plugin);
-  // jks.downloadPlugin(plugin.id, plugin.list[0]);
-  window.open(plugin.list[0].link, "_blank", "noopener,noreferrer")
+  // window.open(plugin.list[0].url, "_blank", "noopener,noreferrer");
 }
 </script>
 
@@ -90,5 +103,10 @@ function onDownloadClickHandler(plugin: JksPlugin) {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  .plugin-table {
+    &:deep(.t-table__header th[data-colkey="operation"]) {
+      padding-left: 15px;
+    }
+  }
 }
 </style>

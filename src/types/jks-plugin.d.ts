@@ -1,39 +1,34 @@
-/**
- * Interface representing the synchronization state of Jenkins plugins
- */
-export interface JksPluginSync {
-  /** Last update timestamp */
-  lastUpdated: string;
-  /** Array of Jenkins plugins */
-  plugins: JksPlugin[];
+import type { version } from "vue";
+
+export interface JksPluginData {
+  generationTimestamp: string;
+  plugins: {
+    [name: string]: {
+      [version: string]: JksPluginVersion;
+    };
+  };
 }
 
-/**
- * Interface representing a Jenkins plugin
- */
 export interface JksPlugin {
-  /** Plugin display name */
-  name: string
-  /** Unique plugin identifier */
-  id: string
-  /** List of available versions for this plugin */
-  list: JksPluginVersion[]
+  name: string;
+  latest: JksPluginVersion;
+  list: JksPluginVersion[];
 }
 
-/**
- * Interface representing a specific version of a Jenkins plugin
- */
 export interface JksPluginVersion {
-  /** Download URL for the plugin */
-  link: string
-  /** Release date of this version */
-  released: string
-  /** SHA1 hash for integrity verification */
-  sha1: string
-  /** SHA256 hash for integrity verification */
-  sha256: string
-  /** Compatible Jenkins version */
-  jksVersion: string
-  /** Plugin version string */
-  version: string
+  buildDate: string;
+  dependencies: JksPluginDependency[];
+  name: string;
+  releaseTimestamp: string;
+  requiredCore: string;
+  sha1: string;
+  sha256: string;
+  url: string;
+  version: string;
+}
+
+export interface JksPluginDependency {
+  name: string;
+  optional: boolean;
+  version: string;
 }
