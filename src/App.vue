@@ -4,7 +4,7 @@
       <p class="app-header__title">Jenkins Plugin Downloader</p>
     </div>
     <div class="app-body">
-      <t-alert theme="info" :message="`Loaded ${jks.pluginList.value.length} plugin(s) data.`" />
+      <t-alert theme="info" :message="`Loaded ${jks.pluginsCount.value} plugin(s) data.`" />
       <t-form :model="formData" layout="inline">
         <t-form-item label="Jenkins Version">
           <t-input v-model="formData.jksVersion" />

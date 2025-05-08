@@ -15,11 +15,11 @@ export function useJenkins() {
     })
   }
 
-  const pluginLength = computed(() => pluginList.value.length)
+  const pluginsCount = computed(() => pluginList.value.length)
 
   return {
     pluginList, isLoaded, lastUpdated,
-    pluginLength,
+    pluginsCount,
     fetchPluginList,
     downloadPlugin
   }
